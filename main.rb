@@ -10,9 +10,9 @@ class Geo < Sinatra::Base
 #		DataMapper.auto_upgrade!
 #	end
 	
-	configure :production do
-		DataMapper.setup(:default, ENV['DATABASE_URL'])
-	end
+#	configure :production do
+#		DataMapper.setup(:default, ENV['DATABASE_URL'])
+#	end
 	
 	# ROUTES
 	get '/' do
