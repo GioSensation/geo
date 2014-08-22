@@ -1,4 +1,6 @@
 require 'sinatra/base'
+require 'json'
+require 'sinatra/json'
 
 class Geo < Sinatra::Base
 	
