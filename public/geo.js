@@ -33,12 +33,17 @@ window.addEventListener('load', function() {
 		maximumAge: 30000
 	};
 	
-	if ( 'geolocation' in navigator ) {
-		navigator.geolocation.getCurrentPosition(sendMyPosition, error, options);
-	} else {
-		alert('Get rid of your fucking browser, you demented bastard!');
+	function geolocateMe() {
+		if ( 'geolocation' in navigator ) {
+			navigator.geolocation.getCurrentPosition(sendMyPosition, error, options);
+		} else {
+			alert('Get rid of your fucking browser, you demented bastard!');
+		}
 	}
 	
-	
+	var sendLocation = document.getElementById('sendLocation');
+	if ( sendLocation ) {
+		sendLocation.addEventListener('click', geolocateMe);
+	}
 	
 });
