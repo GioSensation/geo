@@ -2,8 +2,7 @@ source 'https://rubygems.org'
 gem 'sinatra'
 gem 'sinatra-contrib'
 gem 'json'
-gem 'dm-core'
-gem 'dm-migrations'
+gem 'data_mapper'
 
 group :development do
 	gem 'unicorn'
@@ -12,10 +11,10 @@ group :development do
 	gem 'rb-inotify', :require => false
 	gem 'rb-fsevent', :require => false
 	gem 'guard-unicorn'
-	gem "dm-sqlite-adapter"
+	gem 'dm-sqlite-adapter'
 end
 
 group :production do
 	gem 'pg'
-	gem "dm-postgres-adapter"
+	gem 'dm-postgres-adapter'
 end
