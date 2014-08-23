@@ -3,6 +3,12 @@ require 'json'
 require 'sinatra/json'
 require 'data_mapper'
 
+require 'bundler'
+Bundler.require
+
+# Require our Auth functionality
+require './auth'
+
 module GeoHelpers
 	
 	def distance a, b
@@ -27,33 +33,95 @@ end
 
 class Geo < Sinatra::Base
 	
+	enable :sessions
+	register Sinatra::Flash
+	
 	helpers GeoHelpers
 	
-	# Setup DataMapper with a database URL. On Heroku, ENV['DATABASE_URL'] will be set, when working locally this line will fall back to using SQLite in the current directory.
-	DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/development.db")
-	
-	# Define a simple DataMapper model.
-	class Coords
-		include DataMapper::Resource
+	use Warden::Manager do |config|
+		# Tell Warden to save our Mammoccio info into a session. We will store the Mammoccio's id.
+		config.serialize_into_session{|mammoccio| mammoccio.id}
+		# Tell Warden to take what we've stored in the session and retrieve the corresponding user.
+		config.serialize_from_session{|id| Mammoccio.get(id)}
 		
-		property :id, Serial, :key => true
-		property :created_at, DateTime
-		property :latitude, Decimal, {:precision=>10, :scale=>6}
-		property :longitude, Decimal, {:precision=>10, :scale=>6}
+		config.scope_defaults :default,
+		# Strategies is an array of methods that perform the authentication.
+		strategies: [:password],
+		# The action is a route to send the user when the check for auth has failed.
+		action: '/auth/unauthenticated'
+		# This specifies where to send the user when he fails to log in.
+		config.failure_app = self
 	end
 	
-	# Finalize the DataMapper model.
-	DataMapper.finalize
+	Warden::Manager.before_failure do |env,opts|
+		env['REQUEST_METHOD'] = 'POST'
+	end
+	
+	Warden::Strategies.add(:password) do
+		def valid?
+			params['mammoccio'] && params['mammoccio']['email'] && params['mammoccio']['password']
+		end
 		
-	# Tell DataMapper to update the database according to the definitions above.
-	DataMapper.auto_upgrade!
+		def authenticate!
+			mammoccio = Mammoccio.first(email: params['mammoccio']['email'])
+			
+			if mammoccio.nil?
+				fail!('The username you entered does not exist.')
+			elsif mammoccio.authenticate(params['mammoccio']['password'])
+				success!(mammoccio)
+			else
+				fail!('Could not log in. You are free to feel bad and send us bad, bad words.')
+			end
+		end
+	end
 	
 	# ROUTES
 	get '/' do
 		erb :home
 	end
 	
+	get '/auth/login' do
+		erb :login
+	end
+	
+	post '/auth/login' do
+		env['warden'].authenticate!
+		
+		flash[:success] = env['warden'].message
+		
+		if session[:return_to].nil?
+			redirect '/'
+		else
+			redirect session[:return_to]
+		end
+	end
+	
+	get '/auth/logout' do
+		env['warden'].raw_session.inspect
+		env['warden'].logout
+		flash[:success] = 'Successfully logged out'
+		redirect '/'
+	end
+	
+	post '/auth/unauthenticated' do
+		session[:return_to] = env['warden.options'][:attempted_path]
+		puts env['warden.options'][:attempted_path]
+		puts env['warden']
+		flash[:error] = env['warden'].message || 'You must log in'
+		redirect '/auth/login'
+	end
+	
+	get '/protected' do
+		# Are you logged in, you bastard?
+		env['warden'].authenticate!
+		
+		erb :protected
+	end
+		
 	post '/save-coords' do
+		# Are you logged in, you bastard?
+		env['warden'].authenticate!
+		
 		content_type :json
 		request.body.rewind  # in case someone already read it
 		data = JSON.parse(request.body.read)
