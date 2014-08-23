@@ -16,8 +16,8 @@ window.addEventListener('load', function() {
 	function sendMyPosition(position) {
 //		document.write(position.coords.longitude + ' | ' + position.coords.latitude + ' | accuracy= ' + position.coords.accuracy + '<br>');
 		var ratto = {
-			lon: position.coords.longitude,
-			lat: position.coords.latitude
+			latitude: position.coords.latitude,
+			longitude: position.coords.longitude,
 		};
 		ratto = JSON.stringify( ratto );
 		sendIt( ratto );

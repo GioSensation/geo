@@ -13,8 +13,8 @@ class Geo < Sinatra::Base
 		
 		property :id, Serial, :key => true
 		property :created_at, DateTime
-		property :lon, Decimal, {:precision=>10, :scale=>6}
-		property :lat, Decimal, {:precision=>10, :scale=>6}
+		property :latitude, Decimal, {:precision=>10, :scale=>6}
+		property :longitude, Decimal, {:precision=>10, :scale=>6}
 	end
 	
 	# Finalize the DataMapper model.
