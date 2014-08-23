@@ -8,7 +8,7 @@ window.addEventListener('load', function() {
 			document.write( event.target.responseText );
 		});
 		
-		xmlhttp.open('POST', '/save-position');
+		xmlhttp.open('POST', '/save-coords');
 		xmlhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 		xmlhttp.send( thingToSend );
 	}

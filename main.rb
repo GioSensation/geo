@@ -21,7 +21,7 @@ class Geo < Sinatra::Base
 		erb :home
 	end
 	
-	get '/get-position' do
 		
+	post '/save-coords' do
 	end
 end
