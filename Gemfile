@@ -2,8 +2,10 @@ source 'https://rubygems.org'
 ruby '2.1.2'
 gem 'sinatra'
 gem 'sinatra-contrib'
+gem 'sinatra-flash', require: 'sinatra/flash'
 gem 'json'
 gem 'data_mapper'
+gem 'warden'
 
 group :development do
 	gem 'unicorn'
