@@ -57,6 +57,10 @@ class Geo < Sinatra::Base
 		content_type :json
 		request.body.rewind  # in case someone already read it
 		data = JSON.parse(request.body.read)
+#		"#{data}"
+		ratto = distance [data['latitude'], data['longitude']], [42.962109685071006, 13.875682386939918]
+		"#{ratto}"
+		
 #		@coords = Coords.create(data)
 	end
 end
