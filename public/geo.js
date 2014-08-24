@@ -8,7 +8,7 @@ window.addEventListener('load', function() {
 			document.getElementById('response').innerHTML = event.target.responseText ;
 		});
 		
-		xmlhttp.open('POST', '/save-coords');
+		xmlhttp.open('PATCH', '/save-coords');
 		xmlhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 		xmlhttp.send( thingToSend );
 	}

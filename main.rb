@@ -132,7 +132,7 @@ class Geo < Sinatra::Base
 		erb :protected
 	end
 		
-	post '/save-coords' do
+	patch '/save-coords' do
 		# Are you logged in, you bastard?
 		env['warden'].authenticate!
 		
