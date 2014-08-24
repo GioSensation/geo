@@ -67,12 +67,12 @@ class Geo < Sinatra::Base
 		end
 		
 		def authenticate!
-			mammoccio = Mammoccio.first(email: params['mammoccio']['email'])
+			user = Mammoccio.first(email: params['mammoccio']['email'])
 			
-			if mammoccio.nil?
+			if user.nil?
 				fail!('The username you entered does not exist.')
-			elsif mammoccio.authenticate(params['mammoccio']['password'])
-				success!(mammoccio)
+			elsif user.authenticate(params['mammoccio']['password'])
+				success!(user)
 			else
 				fail!('Could not log in. You are free to feel bad and send us bad, bad words.')
 			end
@@ -89,9 +89,9 @@ class Geo < Sinatra::Base
 	end
 	
 	post '/register' do
-		if @mammoccio = Mammoccio.create(params[:mammoccio])
+		if @user = Mammoccio.create(params[:mammoccio])
 			flash[:success] = "You have successfully registered and are now logged in. Get started immediately!"
-			env['warden'].set_user(@mammoccio)
+			env['warden'].set_user(@user)
 			redirect '/protected'
 		else
 			redirect '/register'
@@ -139,17 +139,17 @@ class Geo < Sinatra::Base
 	patch '/save-coords' do
 		# Are you logged in, you bastard?
 		env['warden'].authenticate!
-		mammoccio_id = env['warden'].user.id
-		mammoccio = find_mammoccio(mammoccio_id)
+		user_id = env['warden'].user.id
+		user = find_mammoccio(user_id)
 		
 		content_type :json
 		request.body.rewind  # in case someone already read it
 		data = JSON.parse(request.body.read)
 		
-		mammoccio.update(:located_time => Time.now, :latitude => data['latitude'], :longitude => data['longitude'])
+		user.update(:located_time => Time.now, :latitude => data['latitude'], :longitude => data['longitude'])
 		
 		ratto = distance [data['latitude'], data['longitude']], [42.962109685071006, 13.875682386939918]
-		"#{ratto}, #{mammoccio.located_time}"
+		"#{ratto}, #{user.located_time}"
 		
 #		@coords = Coords.create(data)
 	end
