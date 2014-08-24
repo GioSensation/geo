@@ -29,8 +29,11 @@ module GeoHelpers
 		rm * c # Delta in meters
 	end
 	
-	def find_mammoccio id
-		Mammoccio.get(id)
+	def auth_and_get_user warden_var
+		# Are you logged in, you bastard?
+		warden_var.authenticate!
+		user_id = warden_var.user.id
+		@user = Mammoccio.get(user_id)
 	end
 	
 end
@@ -131,25 +134,21 @@ class Geo < Sinatra::Base
 	end
 	
 	get '/protected' do
-		# Are you logged in, you bastard?
-		env['warden'].authenticate!
+		auth_and_get_user(env['warden'])
 		erb :protected
 	end
 		
 	patch '/save-coords' do
-		# Are you logged in, you bastard?
-		env['warden'].authenticate!
-		user_id = env['warden'].user.id
-		user = find_mammoccio(user_id)
+		auth_and_get_user(env['warden'])
 		
 		content_type :json
 		request.body.rewind  # in case someone already read it
 		data = JSON.parse(request.body.read)
 		
-		user.update(:located_time => Time.now, :latitude => data['latitude'], :longitude => data['longitude'])
+		@user.update(:located_time => Time.now, :latitude => data['latitude'], :longitude => data['longitude'])
 		
 		ratto = distance [data['latitude'], data['longitude']], [42.962109685071006, 13.875682386939918]
-		"#{ratto}, #{user.located_time}"
+		"#{ratto}, #{@user.located_time}"
 		
 #		@coords = Coords.create(data)
 	end
