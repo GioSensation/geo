@@ -46,4 +46,26 @@ window.addEventListener('load', function() {
 		sendLocation.addEventListener('click', geolocateMe);
 	}
 	
+	function addFriend() {
+		var addFriendButtons = document.querySelectorAll('.add-friend');
+		if (addFriendButtons) {
+			[].forEach.call(addFriendButtons, function (el) {
+				el.addEventListener('click', function(event) {
+					var xmlhttp = new XMLHttpRequest(); // new HttpRequest instance 
+					var friendId = el.getAttribute('data-friend-id');
+					// We define what will happen if the data are successfully sent
+					xmlhttp.addEventListener('load', function(event) {
+						document.getElementById('response').innerHTML = event.target.responseText ;
+					});
+					
+					xmlhttp.open('PATCH', '/add-friend/' + friendId);
+					xmlhttp.send();
+				});
+			})
+			
+		}
+	}
+	
+	addFriend();
+	
 });
