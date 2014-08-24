@@ -145,10 +145,12 @@ class Geo < Sinatra::Base
 		request.body.rewind  # in case someone already read it
 		data = JSON.parse(request.body.read)
 		
-		@user.update(:located_time => Time.now, :latitude => data['latitude'], :longitude => data['longitude'])
-		
-		ratto = distance [data['latitude'], data['longitude']], [42.962109685071006, 13.875682386939918]
-		"#{ratto}, #{@user.located_time}"
+		if @user.update!(:located_time => Time.now, :latitude => data['latitude'], :longitude => data['longitude'])
+			ratto = distance [data['latitude'], data['longitude']], [42.962109685071006, 13.875682386939918]
+			"#{ratto}, #{data['latitude']}"
+		else
+			"error"
+		end
 		
 #		@coords = Coords.create(data)
 	end
