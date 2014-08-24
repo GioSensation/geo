@@ -14,8 +14,9 @@ class Mammoccio
 	property :email,		String,		:length => 5..70, :unique => true, :required => true, :format => :email_address
 	property :password,		BCryptHash
 	property :located_time, DateTime
-	property :latitude, Decimal, {:precision=>10, :scale=>6}
-	property :longitude, Decimal, {:precision=>10, :scale=>6}
+	property :latitude,		Decimal, {:precision=>10, :scale=>6}
+	property :longitude,	Decimal, {:precision=>10, :scale=>6}
+	property :friends,		CommaSeparatedList
 	
 	def authenticate(attempted_password)
 		if self.password == attempted_password
