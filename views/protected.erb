@@ -1,3 +1,8 @@
-	<%= @user.inspect %>
 	<button id="sendLocation">Geolocate Me!</button>
 	<div id="response"></div>
+	<h2>Find your friends</h2>
+	<ul class="all_users">
+		<% Mammoccio.each do |mammoccio| %>
+			<li><%= mammoccio.email %></li>
+		<% end %>
+	</ul>
