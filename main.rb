@@ -80,6 +80,20 @@ class Geo < Sinatra::Base
 		erb :home
 	end
 	
+	get '/register' do
+		erb :register
+	end
+	
+	post '/register' do
+		if @mammoccio = Mammoccio.create(params[:mammoccio])
+			flash[:success] = "You have successfully registered and can now log in"
+			redirect '/auth/login'
+		else
+			redirect '/register'
+			flash[:error] = "Something went wrong"
+		end
+	end
+	
 	get '/auth/login' do
 		erb :login
 	end
