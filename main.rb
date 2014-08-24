@@ -90,8 +90,9 @@ class Geo < Sinatra::Base
 	
 	post '/register' do
 		if @mammoccio = Mammoccio.create(params[:mammoccio])
-			flash[:success] = "You have successfully registered and can now log in"
-			redirect '/auth/login'
+			flash[:success] = "You have successfully registered and are now logged in. Get started immediately!"
+			env['warden'].set_user(@mammoccio)
+			redirect '/protected'
 		else
 			redirect '/register'
 			flash[:error] = "Something went wrong"
