@@ -29,6 +29,10 @@ module GeoHelpers
 		rm * c # Delta in meters
 	end
 	
+	def find_mammoccio id
+		Mammoccio.get(id)
+	end
+	
 end
 
 class Geo < Sinatra::Base
@@ -128,20 +132,23 @@ class Geo < Sinatra::Base
 	get '/protected' do
 		# Are you logged in, you bastard?
 		env['warden'].authenticate!
-		
 		erb :protected
 	end
 		
 	patch '/save-coords' do
 		# Are you logged in, you bastard?
 		env['warden'].authenticate!
+		mammoccio_id = env['warden'].user.id
+		mammoccio = find_mammoccio(mammoccio_id)
 		
 		content_type :json
 		request.body.rewind  # in case someone already read it
 		data = JSON.parse(request.body.read)
-#		"#{data}"
+		
+		mammoccio.update(:located_time => Time.now, :latitude => data['latitude'], :longitude => data['longitude'])
+		
 		ratto = distance [data['latitude'], data['longitude']], [42.962109685071006, 13.875682386939918]
-		"#{ratto}"
+		"#{ratto}, #{mammoccio.located_time}"
 		
 #		@coords = Coords.create(data)
 	end
