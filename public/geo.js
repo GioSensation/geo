@@ -5,7 +5,7 @@ window.addEventListener('load', function() {
 		
 		// We define what will happen if the data are successfully sent
 		xmlhttp.addEventListener('load', function(event) {
-			document.write( event.target.responseText );
+			document.getElementById('response').innerHTML = event.target.responseText ;
 		});
 		
 		xmlhttp.open('POST', '/save-coords');
