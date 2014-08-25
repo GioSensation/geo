@@ -154,4 +154,14 @@ class Geo < Sinatra::Base
 		
 #		@coords = Coords.create(data)
 	end
+	
+	patch '/add-friend/:id' do
+		auth_and_get_user(env['warden'])
+		@user.friends << params[:id]
+		if @user.save
+			"Success!"
+		else
+			"Error!"
+		end
+	end
 end
