@@ -2,7 +2,14 @@
 	<div id="response"></div>
 	<h2>Find your friends</h2>
 	<ul class="all_users">
-		<% Mammoccio.each do |mammoccio| %>
-			<li><%= mammoccio.email %></li>
+		<%= "#{@user.friends}" %>
+		<% myFriends = [*@user.friends] %>
+		<% Mammoccio.reject{|mammoccio| mammoccio.id == @user.id }.each do |mammoccio| %>
+			<% if myFriends.include? mammoccio.id
+				friends = "This is your friend"
+			else
+				friends = "<button class='add-friend' data-friend-id='#{mammoccio.id}'>Add friend</button>"
+			end %>
+			<li><%= mammoccio.email %> <%= friends %></li>
 		<% end %>
 	</ul>
