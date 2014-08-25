@@ -16,7 +16,7 @@ class Mammoccio
 	property :located_time, DateTime
 	property :latitude,		Decimal, {:precision=>20, :scale=>16}
 	property :longitude,	Decimal, {:precision=>20, :scale=>16}
-	property :friends,		CommaSeparatedList
+	property :friends,		CommaSeparatedList, :default => []
 	
 	def authenticate(attempted_password)
 		if self.password == attempted_password
